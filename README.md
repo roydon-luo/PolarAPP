@@ -1,2 +1,2 @@
-# PolarAPP
-Source code of "PolarAPP: Beyond Polarization Demosaicking for Polarimetric Application, ECCV2026"
+# PolarAPP: Beyond Polarization Demosaicking for Polarimetric Application
+The code will be available before Aug. 2026.
