@@ -30,7 +30,7 @@ For resumable HTTPS download in proxy-constrained environments:
 python scripts/download_polargb.py --output ./Datasets/PolaRGB
 ```
 
-See [`Datasets/README.md`](./Datasets/README.md) for the expected data layout and [`experiments/checkpoints/README.md`](./experiments/checkpoints/README.md) for the model layout. Dataset files and model weights are distributed separately.
+See [`Datasets/README.md`](./Datasets/README.md) for the expected data layout and [`experiments/checkpoints/README.md`](./experiments/checkpoints/README.md) for checkpoint download instructions. PolarAPP model weights are available from [Roydon728/PolarAPP](https://huggingface.co/Roydon728/PolarAPP).
 
 ## Code structure
 
@@ -49,7 +49,7 @@ This layout matches the SfP branch. `polarapp/trainer.py` contains the refinemen
 python infer.py \
   --input-dir ./Datasets/PolaRGB \
   --polarfree-checkpoint-dir ./experiments/checkpoints/polarfree \
-  --ckpt-dir ./experiments/checkpoints/polarapp \
+  --ckpt-dir ./experiments/checkpoints/huggingface/DfP \
   --output-dir ./experiments/inference \
   --device cuda:0
 ```
@@ -62,7 +62,7 @@ Predictions are saved by scene. `metrics.csv` always contains PSNR and SSIM. Ins
 python train.py --eval-only \
   --data-path ./Datasets/PolaRGB \
   --polarfree-checkpoint-dir ./experiments/checkpoints/polarfree \
-  --ckpt-dir ./experiments/checkpoints/polarapp \
+  --ckpt-dir ./experiments/checkpoints/huggingface/DfP \
   --device cuda:0
 ```
 
@@ -80,7 +80,7 @@ To resume all three components:
 
 ```bash
 python train.py --resume \
-  --ckpt-dir ./experiments/checkpoints/polarapp \
+  --ckpt-dir ./experiments/checkpoints/huggingface/DfP \
   --device cuda:0
 ```
 
@@ -90,7 +90,7 @@ To run only the integrated refinement stage from existing checkpoints:
 python train.py --refine-only \
   --data-path ./Datasets/PolaRGB \
   --polarfree-checkpoint-dir ./experiments/checkpoints/polarfree \
-  --ckpt-dir ./experiments/checkpoints/polarapp \
+  --ckpt-dir ./experiments/checkpoints/huggingface/DfP \
   --save-ckpt-dir ./experiments/checkpoints/refined \
   --max-refine-step 1000 \
   --device cuda:0

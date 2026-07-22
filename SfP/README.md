@@ -18,7 +18,7 @@ the official PyTorch instructions.
 
 Dataset files are distributed separately. See `Datasets/README.md` for the expected directory layout.
 
-Model checkpoints are distributed separately. See `experiments/checkpoints/README.md` for the expected layout.
+Model checkpoints are available from [Roydon728/PolarAPP](https://huggingface.co/Roydon728/PolarAPP). See `experiments/checkpoints/README.md` for download instructions and the expected layout.
 
 ## Code Structure
 
@@ -33,13 +33,13 @@ Model checkpoints are distributed separately. See `experiments/checkpoints/READM
 Inference requires four folders named `pol000`, `pol045`, `pol090`, and `pol135` with matching RGB image filenames.
 
 ```bash
-python infer.py --input-dir ./Datasets/Testsets --ckpt-dir ./experiments/checkpoints --device cuda:0
+python infer.py --input-dir ./Datasets/Testsets --ckpt-dir ./experiments/checkpoints/huggingface/SfP --device cuda:0
 ```
 
 ## Evaluation
 
 ```bash
-python train.py --eval-only --device cuda:0 --ckpt-dir ./experiments/checkpoints --data-path ./Datasets/Testsets
+python train.py --eval-only --device cuda:0 --ckpt-dir ./experiments/checkpoints/huggingface/SfP --data-path ./Datasets/Testsets
 ```
 
 ## Training

@@ -1,5 +1,6 @@
 # Install a matching torch/torchvision pair for your CUDA version first.
 einops
+huggingface_hub
 kornia
 numpy
 omegaconf
@@ -11,4 +12,3 @@ tqdm
 # Optional paper metrics:
 # lpips
 # pyiqa
-

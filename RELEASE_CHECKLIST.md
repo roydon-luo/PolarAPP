@@ -9,8 +9,8 @@ public.
 - [ ] **BLOCKING:** choose the project license. If MIT is approved, review and
       rename `LICENSE.template` to `LICENSE`.
 - [ ] Replace `REPLACE_WITH_ORG` in `CITATION.cff` with the final GitHub owner.
-- [ ] Publish SfP and DfP checkpoints and replace the placeholder commands in
-      both task READMEs with stable URLs and SHA-256 checksums.
+- [x] Publish SfP and DfP checkpoints with stable URLs and SHA-256 checksums:
+      <https://huggingface.co/Roydon728/PolarAPP>.
 - [ ] Confirm that every reported paper result maps to a published config and
       checkpoint.
 - [ ] Run `python scripts/check_release.py .` from the repository root.
