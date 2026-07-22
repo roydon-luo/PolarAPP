@@ -92,3 +92,49 @@ class PolaRGBDataset(Dataset):
             "prefix": prefix,
             "scene": scene,
         }
+
+
+class PolaRGBInferenceDataset(Dataset):
+    """Load polarization captures without task annotations for inference."""
+
+    def __init__(self, root: str | Path) -> None:
+        root = Path(root)
+        candidates = (root / "test" / "input", root / "input", root)
+        self.input_root = next((path for path in candidates if path.is_dir()), None)
+        if self.input_root is None:
+            raise FileNotFoundError(f"Inference input directory not found under {root}")
+
+        direct_files = list(self.input_root.glob("*_000.png"))
+        scene_dirs = (
+            [self.input_root]
+            if direct_files
+            else sorted(path for path in self.input_root.iterdir() if path.is_dir())
+        )
+        self.samples: list[tuple[Path, str, str]] = []
+        for scene_dir in scene_dirs:
+            prefixes = sorted(
+                path.name.removesuffix("_000.png")
+                for path in scene_dir.glob("*_000.png")
+                if not path.name.endswith(".part")
+            )
+            for prefix in prefixes:
+                required = [
+                    scene_dir / f"{prefix}_{suffix}.png" for suffix in POLAR_SUFFIXES
+                ]
+                if all(path.is_file() and path.stat().st_size > 0 for path in required):
+                    self.samples.append((scene_dir, prefix, scene_dir.name))
+
+        if not self.samples:
+            raise RuntimeError(
+                f"No complete polarization captures found under {self.input_root}"
+            )
+
+    def __len__(self) -> int:
+        return len(self.samples)
+
+    def __getitem__(self, index: int) -> dict[str, torch.Tensor | str]:
+        scene_dir, prefix, scene = self.samples[index]
+        polar = torch.cat(
+            [_load_rgb(scene_dir / f"{prefix}_{suffix}.png") for suffix in POLAR_SUFFIXES]
+        )
+        return {"polar": polar, "prefix": prefix, "scene": scene}

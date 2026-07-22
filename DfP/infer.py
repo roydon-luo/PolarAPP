@@ -21,7 +21,6 @@ def build_parser():
     parser.add_argument("--batch-size", type=int, default=1)
     parser.add_argument("--workers", type=int, default=2)
     parser.add_argument("--limit", type=int, default=None)
-    parser.add_argument("--basic-metrics", action="store_true")
     return parser
 
 
@@ -39,15 +38,14 @@ def main():
     dataloader = build_inference_loader(
         args.input_dir, args.batch_size, args.workers, args.limit
     )
-    metrics = infer(
+    output_dir = infer(
         dataloader,
         dem_model,
         task_model,
         device,
         args.output_dir,
-        full_metrics=not args.basic_metrics,
     )
-    print(f"Results saved to {args.output_dir}: {metrics}")
+    print(f"Results saved to {output_dir.resolve()}")
 
 
 if __name__ == "__main__":

@@ -1,13 +1,12 @@
 from pathlib import Path
 
 import torch
+from Dataloader.dataloader import PolarizationDataset
 from PIL import Image
 from torch.utils.data import DataLoader, Dataset
 from torchvision import transforms
 
-from Dataloader.dataloader import PolarizationDataset
 from polarapp.config import seed_worker
-
 
 POLARIZATION_FOLDERS = ("pol000", "pol045", "pol090", "pol135")
 IMAGE_SUFFIXES = (".png", ".jpg", ".jpeg", ".tif", ".tiff")

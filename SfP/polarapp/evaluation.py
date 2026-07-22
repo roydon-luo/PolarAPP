@@ -7,6 +7,7 @@ import torch
 import torch.nn.functional as F
 from torchvision.utils import save_image
 from tqdm import tqdm
+from utils.init_interp import init_interp
 
 from polarapp.operations import (
     calculate_stokes,
@@ -17,11 +18,12 @@ from polarapp.operations import (
 )
 
 
-def predict_batch(pol, dem_model, task_model):
-    height, width = pol.shape[-2:]
+def predict_batch(pol, dem_model, task_model, imaging_operator=None):
+    demosaicker_input = imaging_operator(pol) if imaging_operator is not None else pol
+    height, width = demosaicker_input.shape[-2:]
     coordinate = get_coordinate(2 * height, 2 * width).to(pol.device)
     coordinate = coordinate.unsqueeze(0).expand(pol.shape[0], -1, -1, -1)
-    pol_pred, _ = dem_model(pol, ELT_state=False)
+    pol_pred, _ = dem_model(demosaicker_input, ELT_state=False)
     normal_pred, _ = task_model(inter_data_process(pol_pred, coordinate))
     return pol_pred, normal_pred
 
@@ -104,30 +106,35 @@ def evaluate(
     task_model.eval()
     sample_results = []
     output_dir = Path(output_dir) / tag
+    imaging_operator = init_interp(phase="train").to(device)
 
     with torch.inference_mode():
         for pol, normal, mask, names in tqdm(dataloader, desc="Evaluating"):
             pol = pol.to(device)
             normal = normal.to(device)
             mask = mask.to(device)
-            pol_pred, normal_pred = predict_batch(pol, dem_model, task_model)
-            normal_gt = F.normalize(
-                F.interpolate(
-                    normal, scale_factor=2, mode="bilinear", align_corners=False
-                ),
-                p=2,
-                dim=1,
+            pol_pred, normal_pred = predict_batch(
+                pol, dem_model, task_model, imaging_operator
             )
-            mask_up = F.interpolate(mask, scale_factor=2, mode="nearest")
+            normal_gt = F.normalize(normal, p=2, dim=1)
+            if normal_pred.shape[-2:] != normal_gt.shape[-2:]:
+                raise RuntimeError(
+                    "Evaluation output must match native task GT resolution: "
+                    f"prediction={tuple(normal_pred.shape[-2:])}, "
+                    f"GT={tuple(normal_gt.shape[-2:])}"
+                )
             for index, name in enumerate(names):
                 sample_results.append(
                     _sample_metrics(
-                        normal_pred[index], normal_gt[index], mask_up[index]
+                        normal_pred[index], normal_gt[index], mask[index]
                     )
                 )
-                sample_mask = mask_up[index].squeeze().detach().cpu().numpy()
+                sample_mask = mask[index].squeeze().detach().cpu().numpy()
                 save_prediction(
-                    pol_pred[index], normal_pred[index], output_dir / name, sample_mask
+                    pol_pred[index],
+                    normal_pred[index],
+                    output_dir / name,
+                    sample_mask,
                 )
 
     metrics = _average_metrics(sample_results)

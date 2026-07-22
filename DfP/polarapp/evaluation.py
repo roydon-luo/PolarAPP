@@ -6,13 +6,15 @@ import torch
 import torch.nn.functional as F
 from torchvision.utils import save_image
 from tqdm import tqdm
+from utils.init_interp import init_interp
 
 from polarapp.losses import ssim
 from polarapp.operations import inter_data_process
 
 
-def predict_batch(polar, dem_model, task_model):
-    restored, _ = dem_model(polar, ELT_state=False)
+def predict_batch(polar, dem_model, task_model, imaging_operator=None):
+    demosaicker_input = imaging_operator(polar) if imaging_operator is not None else polar
+    restored, _ = dem_model(demosaicker_input, ELT_state=False)
     prediction, _, _, _ = task_model(inter_data_process(restored), phase="val")
     return restored, prediction.clamp(0, 1)
 
@@ -64,21 +66,27 @@ def evaluate(
     dem_model.eval()
     task_model.eval()
     output_dir = Path(output_dir) / tag
+    imaging_operator = init_interp(phase="train").to(device)
     optional = _optional_metrics(device) if full_metrics else {}
     rows = []
     with torch.inference_mode():
         for batch in tqdm(dataloader, desc="Evaluating DfP"):
             polar = batch["polar"].to(device, non_blocking=device.type == "cuda")
             target = batch["gt_rgb"].to(device, non_blocking=device.type == "cuda")
-            _, prediction = predict_batch(polar, dem_model, task_model)
-            evaluated = F.interpolate(
-                prediction, size=target.shape[-2:], mode="bilinear", align_corners=False
-            ).clamp(0, 1)
+            _, prediction = predict_batch(
+                polar, dem_model, task_model, imaging_operator
+            )
+            if prediction.shape[-2:] != target.shape[-2:]:
+                raise RuntimeError(
+                    "Evaluation output must match native task GT resolution: "
+                    f"prediction={tuple(prediction.shape[-2:])}, "
+                    f"GT={tuple(target.shape[-2:])}"
+                )
             for index, (scene, prefix) in enumerate(zip(batch["scene"], batch["prefix"])):
                 scene_dir = output_dir / scene
                 scene_dir.mkdir(parents=True, exist_ok=True)
                 save_image(prediction[index].cpu(), scene_dir / f"{prefix}_rgb.png")
-                pred_item = evaluated[index : index + 1]
+                pred_item = prediction[index : index + 1]
                 target_item = target[index : index + 1]
                 row = {
                     "scene": scene,
@@ -107,14 +115,20 @@ def evaluate(
     return averages
 
 
-def infer(dataloader, dem_model, task_model, device, output_dir, full_metrics=True):
-    return evaluate(
-        dataloader,
-        dem_model,
-        task_model,
-        device,
-        output_dir,
-        tag="inference",
-        full_metrics=full_metrics,
-    )
-
+def infer(dataloader, dem_model, task_model, device, output_dir):
+    dem_model.eval()
+    task_model.eval()
+    output_dir = Path(output_dir)
+    with torch.inference_mode():
+        for batch in tqdm(dataloader, desc="Inferring DfP"):
+            polar = batch["polar"].to(
+                device, non_blocking=device.type == "cuda"
+            )
+            _, prediction = predict_batch(polar, dem_model, task_model)
+            for index, (scene, prefix) in enumerate(
+                zip(batch["scene"], batch["prefix"])
+            ):
+                scene_dir = output_dir / scene
+                scene_dir.mkdir(parents=True, exist_ok=True)
+                save_image(prediction[index].cpu(), scene_dir / f"{prefix}_rgb.png")
+    return output_dir

@@ -25,5 +25,18 @@ The data loader checks each selected sample for all polarization-angle, RGB,
 and ground-truth files when training or evaluation starts. A separate data
 validation command is therefore unnecessary.
 
+For annotation-free inference, `infer.py` only requires the four polarization
+images for each capture. It accepts the dataset root shown above, an `input`
+directory, or a directory that directly contains scene folders:
+
+```text
+input/
+`-- <scene>/
+    |-- <capture>_000.png
+    |-- <capture>_045.png
+    |-- <capture>_090.png
+    `-- <capture>_135.png
+```
+
 PolaRGB is available separately from
 <https://huggingface.co/datasets/Mingde/PolaRGB> under CC BY-NC 4.0.

@@ -35,7 +35,7 @@ See [`Datasets/README.md`](./Datasets/README.md) for the expected data layout an
 ## Code structure
 
 - `train.py` is the unified training, refinement, and evaluation entry point.
-- `infer.py` runs prediction and metric evaluation on PolaRGB inputs.
+- `infer.py` runs prediction from polarization inputs without task annotations.
 - `polarapp/trainer.py` coordinates feature alignment, joint training, and TaskNet refinement.
 - `polarapp/evaluation.py` contains prediction, metrics, and output routines.
 - `polarapp/data.py` and `polarapp/checkpoints.py` handle data and model state.
@@ -44,6 +44,11 @@ See [`Datasets/README.md`](./Datasets/README.md) for the expected data layout an
 This layout matches the SfP branch. `polarapp/trainer.py` contains the refinement training stage.
 
 ## Inference
+
+Inference reads complete `{000,045,090,135}` polarization captures from
+`test/input`, `input`, or a directory containing scene folders. Task ground truth
+is not required. It saves the full-resolution de-reflected RGB prediction at twice
+the input height and width and does not compute metrics.
 
 ```bash
 python infer.py \
@@ -54,17 +59,33 @@ python infer.py \
   --device cuda:0
 ```
 
-Predictions are saved by scene. `metrics.csv` always contains PSNR and SSIM. Install `lpips` and `pyiqa` for the optional LPIPS and MUSIQ metrics. Use `--limit 1 --basic-metrics` for a short end-to-end smoke test.
+Predictions are saved by scene. Use `--limit 1` for a short end-to-end smoke test.
 
 ## Evaluation
+
+Evaluation reads `test/input` together with `test/gt`. It uses the simulated-imaging
+evaluation path, which produces the task result directly at the task ground-truth
+resolution before PSNR and SSIM are computed. Install `lpips` and `pyiqa`, then
+pass `--full-metrics`, to add LPIPS and MUSIQ.
 
 ```bash
 python train.py --eval-only \
   --data-path ./Datasets/PolaRGB \
   --polarfree-checkpoint-dir ./experiments/checkpoints/polarfree \
   --ckpt-dir ./experiments/checkpoints/huggingface/DfP \
+  --full-metrics \
   --device cuda:0
 ```
+
+The evaluation outputs and per-sample `metrics.csv` are saved under
+`experiments/images/test/polarapp_dfp/` by default. The complete public test set
+contains 188 samples; omit `--limit` to evaluate all of them.
+
+Results from the released checkpoints on all 188 public test samples:
+
+| PSNR | SSIM | LPIPS | MUSIQ |
+| ---: | ---: | ---: | ---: |
+| 22.8614 | 0.8701 | 0.1418 | 60.4025 |
 
 `--data-path` may point directly at the local public PolaRGB root used for the evaluation run; evaluation limits such as the 100-image protocol are independent of training orchestration.
 

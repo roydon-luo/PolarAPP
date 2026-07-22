@@ -1,4 +1,4 @@
-from Dataloader.dataloader import PolaRGBDataset
+from Dataloader.dataloader import PolaRGBDataset, PolaRGBInferenceDataset
 from torch.utils.data import DataLoader, Subset
 
 from polarapp.config import seed_worker
@@ -65,5 +65,7 @@ def build_training_loaders(config):
 
 
 def build_inference_loader(path, batch_size, workers=0, limit=None):
-    return build_eval_loader(path, batch_size, 0, workers, limit)
-
+    dataset = PolaRGBInferenceDataset(path)
+    if limit is not None:
+        dataset = Subset(dataset, range(min(limit, len(dataset))))
+    return _loader(dataset, batch_size, False, 0, workers)

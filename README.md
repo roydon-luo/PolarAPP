@@ -1,4 +1,4 @@
-# PolarAPP: Beyond Polarization Demosaicking for Polarimetric Applications (ECCV 2026)
+# PolarAPP: Beyond Polarization Demosaicking for Polarimetric Applications
 
 <p align="center">
   <a href="https://arxiv.org/abs/2603.23071"><img src="https://img.shields.io/badge/arXiv-2603.23071-b31b1b.svg" alt="arXiv paper"></a>
@@ -80,6 +80,11 @@ PolarAPP/
 Datasets, pretrained weights, and experiment outputs are deliberately excluded
 from Git. Download locations and expected layouts are documented in the task
 READMEs.
+
+Both tasks use annotation-aware evaluation and annotation-free inference.
+Evaluation computes metrics and saves task results at the task ground-truth
+resolution. Inference computes no metrics and preserves the two-times
+full-resolution task output.
 
 ## Quick start
 
