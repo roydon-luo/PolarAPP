@@ -1,4 +1,3 @@
-import re
 from pathlib import Path
 
 import torch
@@ -38,23 +37,11 @@ def load_state(path):
     return extract_state(_load_file(path), path)
 
 
-def find_checkpoint(folder, prefix, epoch=None):
-    folder = Path(folder)
-    if epoch is not None:
-        for path in (folder / f"{prefix}_{epoch:03d}.pth", folder / f"{prefix}_{epoch}.pth"):
-            if path.exists():
-                return path
-        raise FileNotFoundError(f"No {prefix} checkpoint for epoch {epoch} in {folder}")
-    pattern = re.compile(rf"^{re.escape(prefix)}_(\d+)\.pth$")
-    checkpoints = []
-    if folder.exists():
-        for path in folder.iterdir():
-            match = pattern.match(path.name)
-            if match:
-                checkpoints.append((int(match.group(1)), path))
-    if not checkpoints:
-        raise FileNotFoundError(f"No {prefix} checkpoint found in {folder}")
-    return max(checkpoints, key=lambda item: item[0])[1]
+def find_checkpoint(folder, prefix):
+    path = Path(folder) / f"{prefix}.pth"
+    if not path.is_file():
+        raise FileNotFoundError(f"Checkpoint not found: {path}")
+    return path
 
 
 def load_checkpoint(model, path, device, optimizer=None, scheduler=None):
@@ -68,10 +55,10 @@ def load_checkpoint(model, path, device, optimizer=None, scheduler=None):
     return checkpoint
 
 
-def load_inference_checkpoints(dem_model, task_model, root, device, epoch=None):
+def load_inference_checkpoints(dem_model, task_model, root, device):
     root = Path(root)
-    dem_path = find_checkpoint(root / "DemNet", "DemNet", epoch)
-    task_path = find_checkpoint(root / "TaskNet", "TaskNet", epoch)
+    dem_path = find_checkpoint(root / "DemNet", "DemNet")
+    task_path = find_checkpoint(root / "TaskNet", "TaskNet")
     load_checkpoint(dem_model, dem_path, device)
     load_checkpoint(task_model.net_g, task_path, device)
     return dem_path, task_path
@@ -92,13 +79,11 @@ def _save_checkpoint(path, epoch, model, optimizer, scheduler):
 
 def save_training_checkpoints(root, epoch, components):
     root = Path(root)
-    display_epoch = epoch + 1
     for name, model, optimizer, scheduler in components:
         _save_checkpoint(
-            root / name / f"{name}_{display_epoch:03d}.pth",
+            root / name / f"{name}.pth",
             epoch,
             model,
             optimizer,
             scheduler,
         )
-

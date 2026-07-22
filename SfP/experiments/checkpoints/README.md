@@ -7,11 +7,11 @@ Place the checkpoint files as follows:
 ```text
 experiments/checkpoints/
   DemNet/
-    DemNet_<epoch>.pth
+    DemNet.pth
   TaskNet/
-    TaskNet_<epoch>.pth
+    TaskNet.pth
   FANet/
-    FANet_<epoch>.pth
+    FANet.pth
 ```
 
-The inference script automatically selects the latest matching checkpoint unless `--ckpt-epoch` is supplied.
+Training updates these fixed filenames and stores the current epoch inside each checkpoint.

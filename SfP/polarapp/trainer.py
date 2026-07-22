@@ -5,6 +5,7 @@ import torch
 import torch.nn.functional as F
 import torch.optim as optim
 from tqdm import tqdm
+from utils.init_interp import init_interp
 
 from polarapp.checkpoints import (
     find_checkpoint,
@@ -26,7 +27,6 @@ from polarapp.operations import (
     outer_update,
     sync_meta_parameters,
 )
-from utils.init_interp import init_interp
 
 
 def _set_trainable(module, trainable):
@@ -340,7 +340,7 @@ def _resume_training(config, models, optimizers, schedulers, device):
     for prefix, folder, model, optimizer, scheduler in zip(
         prefixes, folders, models, optimizers, schedulers
     ):
-        path = find_checkpoint(folder, prefix, getattr(config, "resume_epoch", None))
+        path = find_checkpoint(folder, prefix)
         checkpoints.append(load_checkpoint(model, path, device, optimizer, scheduler))
     start_epoch = int(checkpoints[0]["epoch"]) + 1
     print(f"Resuming from epoch {start_epoch}")
@@ -443,7 +443,6 @@ def evaluate_only(config, device):
         task_model,
         config.eval_ckpt_dir,
         device,
-        getattr(config, "eval_epoch", None),
     )
     dataloader = build_eval_loader(
         config.test_data_path, config.test_batch_size, config.seed
@@ -455,7 +454,7 @@ def evaluate_only(config, device):
         device,
         Path(config.save_dir) / "images" / "test",
         tag=getattr(config, "eval_tag", "evaluation"),
-        epoch=getattr(config, "eval_epoch", None),
+        epoch=None,
         log_path=getattr(config, "eval_log_path", None),
     )
 

@@ -60,7 +60,6 @@ def build_train_parser():
     parser.add_argument("--config", default="./configs/train_config.yaml")
     parser.add_argument("--eval-only", action="store_true")
     parser.add_argument("--ckpt-dir", default=None)
-    parser.add_argument("--ckpt-epoch", type=int, default=None)
     parser.add_argument("--save-ckpt-dir", default=None)
     parser.add_argument("--data-path", default=None)
     parser.add_argument("--device", default=None)
@@ -90,9 +89,6 @@ def apply_train_overrides(config, args):
         config.Dem_pretain_path = f"{args.ckpt_dir}/DemNet"
         config.Task_pretain_path = f"{args.ckpt_dir}/TaskNet"
         config.FA_pretain_path = f"{args.ckpt_dir}/FANet"
-    if args.ckpt_epoch is not None:
-        config.eval_epoch = args.ckpt_epoch
-        config.resume_epoch = args.ckpt_epoch
     if args.save_ckpt_dir is not None:
         config.save_ckpt_dir = args.save_ckpt_dir
     if args.data_path is not None:

@@ -1,22 +1,22 @@
 # DfP checkpoints
 
-Weights are not included. Place them in the following layout:
+Weights are distributed separately. Place them in the following layout:
 
 ```text
 experiments/checkpoints/
 |-- polarapp/
 |   |-- DemNet/
-|   |   `-- DemNet_200.pth
+|   |   `-- DemNet.pth
 |   |-- TaskNet/
-|   |   `-- TaskNet_200.pth
+|   |   `-- TaskNet.pth
 |   `-- FANet/
-|       `-- FANet_200.pth
+|       `-- FANet.pth
 `-- polarfree/
     |-- net_le_dm_latest.pth
     |-- net_d_latest.pth
     `-- net_g_latest.pth
 ```
 
-`net_g_latest.pth` initializes TaskNet for a fresh training run. It is not required when a PolarAPP TaskNet checkpoint is loaded for inference, evaluation, refinement, or resumed training.
+`net_g_latest.pth` initializes TaskNet for a fresh training run. Inference, evaluation, refinement, and resumed training load `TaskNet.pth`.
 
-Checkpoint loaders accept a raw state dictionary or a dictionary containing `model_state_dict`, `state_dict`, `params`, or `params_ema`. Epoch filenames may use padded or unpadded numbers.
+Checkpoint loaders accept a raw state dictionary or a dictionary containing `model_state_dict`, `state_dict`, `params`, or `params_ema`. Training updates the fixed component filenames and stores the current epoch inside each checkpoint.

@@ -360,7 +360,7 @@ def _resume_training(config, models, optimizers, schedulers, device):
     for prefix, folder, model, optimizer, scheduler in zip(
         prefixes, folders, checkpoint_models, optimizers, schedulers
     ):
-        path = find_checkpoint(folder, prefix, getattr(config, "resume_epoch", None))
+        path = find_checkpoint(folder, prefix)
         checkpoints.append(load_checkpoint(model, path, device, optimizer, scheduler))
     start_epoch = int(checkpoints[0].get("epoch", -1)) + 1
     print(f"Resuming from epoch {start_epoch + 1}")
@@ -368,12 +368,14 @@ def _resume_training(config, models, optimizers, schedulers, device):
 
 
 def _load_all_checkpoints(config, dem_model, task_model, fa_model, device):
-    epoch = getattr(config, "eval_epoch", None)
-    load_inference_checkpoints(
-        dem_model, task_model, config.eval_ckpt_dir, device, epoch
-    )
-    fa_path = find_checkpoint(Path(config.eval_ckpt_dir) / "FANet", "FANet", epoch)
+    root = Path(config.eval_ckpt_dir)
+    dem_path = find_checkpoint(root / "DemNet", "DemNet")
+    task_path = find_checkpoint(root / "TaskNet", "TaskNet")
+    fa_path = find_checkpoint(root / "FANet", "FANet")
+    load_checkpoint(dem_model, dem_path, device)
+    task_checkpoint = load_checkpoint(task_model.net_g, task_path, device)
     load_checkpoint(fa_model, fa_path, device)
+    return int(task_checkpoint.get("epoch", -1)) + 1
 
 
 def fit(config, device):
@@ -492,7 +494,6 @@ def evaluate_only(config, device):
         task_model,
         config.eval_ckpt_dir,
         device,
-        getattr(config, "eval_epoch", None),
     )
     dataloader = build_eval_loader(
         config.test_data_path,
@@ -508,7 +509,7 @@ def evaluate_only(config, device):
         device,
         Path(config.save_dir) / "images" / "test",
         tag=getattr(config, "eval_tag", "evaluation"),
-        epoch=getattr(config, "eval_epoch", None),
+        epoch=None,
         log_path=getattr(config, "eval_log_path", None),
         full_metrics=config.full_metrics,
     )
@@ -522,13 +523,14 @@ def refine_only(config, device):
         device,
         load_generator=False,
     )
-    _load_all_checkpoints(config, dem_model, task_model, fa_model, device)
+    checkpoint_epoch = _load_all_checkpoints(
+        config, dem_model, task_model, fa_model, device
+    )
     optimizer_task = optim.Adam(task_model.training_parameters(), lr=config.lr)
     scheduler_task = torch.optim.lr_scheduler.CosineAnnealingLR(
         optimizer_task, T_max=1, eta_min=1e-6
     )
     criterion = DfPTaskLoss(config.perceptual_weight).to(device)
-    checkpoint_epoch = int(getattr(config, "eval_epoch", 0) or 0)
     refine_task(
         config,
         loaders["refine"],

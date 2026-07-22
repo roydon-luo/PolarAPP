@@ -18,7 +18,6 @@ def build_parser():
     parser.add_argument("--dm-config", default="./configs/dm_config.yaml")
     parser.add_argument("--output-dir", default="./experiments/inference")
     parser.add_argument("--device", default=None)
-    parser.add_argument("--ckpt-epoch", type=int, default=None)
     parser.add_argument("--batch-size", type=int, default=1)
     parser.add_argument("--workers", type=int, default=2)
     parser.add_argument("--limit", type=int, default=None)
@@ -36,9 +35,7 @@ def main():
         device,
         load_generator=False,
     )
-    load_inference_checkpoints(
-        dem_model, task_model, args.ckpt_dir, device, args.ckpt_epoch
-    )
+    load_inference_checkpoints(dem_model, task_model, args.ckpt_dir, device)
     dataloader = build_inference_loader(
         args.input_dir, args.batch_size, args.workers, args.limit
     )
@@ -55,4 +52,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
