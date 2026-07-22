@@ -1,0 +1,42 @@
+cff-version: 1.2.0
+message: "If you use PolarAPP, please cite the paper below."
+title: "PolarAPP: Beyond Polarization Demosaicking for Polarimetric Applications"
+type: software
+authors:
+  - family-names: Luo
+    given-names: Yidong
+  - family-names: Li
+    given-names: Chenggong
+  - family-names: Song
+    given-names: Yunfeng
+  - family-names: Wang
+    given-names: Ping
+  - family-names: Shi
+    given-names: Boxin
+  - family-names: Zhang
+    given-names: Junchao
+  - family-names: Yuan
+    given-names: Xin
+repository-code: "https://github.com/REPLACE_WITH_ORG/PolarAPP"
+url: "https://arxiv.org/abs/2603.23071"
+preferred-citation:
+  type: article
+  title: "PolarAPP: Beyond Polarization Demosaicking for Polarimetric Applications"
+  authors:
+    - family-names: Luo
+      given-names: Yidong
+    - family-names: Li
+      given-names: Chenggong
+    - family-names: Song
+      given-names: Yunfeng
+    - family-names: Wang
+      given-names: Ping
+    - family-names: Shi
+      given-names: Boxin
+    - family-names: Zhang
+      given-names: Junchao
+    - family-names: Yuan
+      given-names: Xin
+  journal: "arXiv preprint arXiv:2603.23071"
+  year: 2026
+

@@ -1,0 +1,14 @@
+# Install a matching torch/torchvision pair for your CUDA version first.
+einops
+kornia
+numpy
+omegaconf
+opencv-python
+pillow
+requests
+tqdm
+
+# Optional paper metrics:
+# lpips
+# pyiqa
+

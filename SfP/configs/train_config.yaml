@@ -1,0 +1,45 @@
+project_id: "train"
+save_dir: "experiments"
+seed: 7
+is_cuda : True
+device : "cuda:0"
+
+inp_channels : 12
+out_channels : 12
+kernel_channel : 64
+kernel_size : 3
+iter_weight_share : False
+share_decoder : False
+
+train_data_path : './Datasets/Trainsets/'
+val_data_path : './Datasets/Testsets/'
+test_data_path : './Datasets/Testsets/'
+meta_batch_size : 1
+train_batch_size : 4
+val_batch_size : 1
+test_batch_size : 1
+refine_batch_size : 1
+dataset_crop_size : 512
+dataset_crop_alpha_only : true
+img_size : 128
+resize_h : 128
+resize_w : 128
+val_freq : 1
+test_freq: 1
+
+epochs : 400
+max_meta_step : 200
+max_stage2_step : 1000
+max_refine_step : 1000
+lr : 5e-5
+task_loss_weight : 20
+fa_loss_weight : 1000
+resume_state: false
+Dem_pretain_path : './experiments/checkpoints/DemNet'
+Task_pretain_path : './experiments/checkpoints/TaskNet'
+FA_pretain_path : './experiments/checkpoints/FANet'
+eval_ckpt_dir : './experiments/checkpoints'
+eval_tag : 'polarapp_fullres'
+meta_freq : 2
+stage2_freq: 2
+save_freq : 1

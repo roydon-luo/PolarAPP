@@ -1,0 +1,65 @@
+train_dm: false
+network_le:
+  in_chans: 12
+  embed_dim: 64 # same as above
+  block_num: 6
+  group: 4 # same as above
+  stage: 1
+  patch_expansion: 0.5
+  channel_expansion: 4
+network_le_dm:
+  in_chans: 9
+  embed_dim: 64 # same as above
+  block_num: 6
+  group: 4 # same as above
+  stage: 2
+  patch_expansion: 0.5
+  channel_expansion: 4
+network_d:
+  in_channel: 256 # (embed_dim*4)
+  out_channel: 256 # (embed_dim*4)
+  inner_channel: 512
+  block_num: 4
+  group: 4 # same as above
+  patch_expansion: 0.5
+  channel_expansion: 2
+# network structures
+network_g:
+  inp_channels: 3
+  out_channels: 3
+  dim: 48
+  num_blocks: [3,4,4,4]
+  num_refinement_blocks: 4
+  heads: [1,2,4,8]
+  ffn_expansion_factor: 2.66
+  bias: False
+  LayerNorm_type: WithBias
+  dual_pixel_task: False
+  embed_dim: 64
+  group: 4 # N=4*4
+diffusion_schedule:
+  apply_ldm: False
+  schedule: linear
+  timesteps: 8
+  linear_start: 0.1 # 1e-6
+  linear_end: 0.99 # 1e-2
+# path
+path:
+  # Entry points replace these paths from --polarfree-checkpoint-dir.
+  pretrain_network_g: ~
+  param_key_g: params
+  strict_load_g: true
+
+  pretrain_network_le: ~
+  param_key_le: params
+  strict_load_le: true
+
+  pretrain_network_le_dm: ~
+  param_key_le_dm: params
+  strict_load_le_dm: true
+
+  pretrain_network_d: ~
+  param_key_d: params
+  strict_load_d: true
+
+  resume_state: ~

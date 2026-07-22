@@ -1,0 +1,41 @@
+project_id: "train"
+save_dir: "./experiments"
+seed: 6
+device: "cuda:0"
+
+train_data_path: "./Datasets/PolaRGB"
+val_data_path: "./Datasets/PolaRGB"
+test_data_path: "./Datasets/PolaRGB"
+dm_config_path: "./configs/dm_config.yaml"
+polarfree_checkpoint_dir: "./experiments/checkpoints/polarfree"
+
+meta_batch_size: 2
+train_batch_size: 2
+refine_batch_size: 1
+val_batch_size: 1
+test_batch_size: 1
+workers: 2
+img_size: 128
+
+epochs: 100
+max_meta_step: 200
+max_stage2_step: 0       # 0 uses the complete training loader
+max_refine_step: 1000   # 0 skips TaskNet refinement
+lr: 5e-5
+task_loss_weight: 20
+fa_loss_weight: 10
+perceptual_weight: 0.1
+
+resume_state: false
+Dem_pretain_path: "./experiments/checkpoints/polarapp/DemNet"
+Task_pretain_path: "./experiments/checkpoints/polarapp/TaskNet"
+FA_pretain_path: "./experiments/checkpoints/polarapp/FANet"
+eval_ckpt_dir: "./experiments/checkpoints/polarapp"
+save_ckpt_dir: "./experiments/checkpoints/polarapp"
+eval_tag: "polarapp_dfp"
+eval_log_path: null
+full_metrics: false
+
+save_freq: 1
+val_freq: 1
+test_freq: 1
