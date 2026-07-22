@@ -82,9 +82,8 @@ from Git. Download locations and expected layouts are documented in the task
 READMEs.
 
 Both tasks use annotation-aware evaluation and annotation-free inference.
-Evaluation computes metrics and saves task results at the task ground-truth
-resolution. Inference computes no metrics and preserves the two-times
-full-resolution task output.
+Evaluation saves task results at the task ground-truth resolution. Inference
+preserves the two-times full-resolution task output.
 
 ## Quick start
 

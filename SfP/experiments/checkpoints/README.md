@@ -21,7 +21,7 @@ experiments/checkpoints/huggingface/SfP/
 Pass `--ckpt-dir ./experiments/checkpoints/huggingface/SfP` to `infer.py` or
 `train.py --eval-only`.
 
-Training updates these fixed filenames and stores the current epoch inside each checkpoint.
+Training updates these fixed component filenames.
 
 The published SHA-256 checksums are listed in
 [`SHA256SUMS.txt`](https://huggingface.co/Roydon728/PolarAPP/blob/main/SHA256SUMS.txt).
