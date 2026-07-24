@@ -1,4 +1,4 @@
-# PolarAPP: Beyond Polarization Demosaicking for Polarimetric Applications (ECCV 2026)
+# PolarAPP: Beyond Polarization Demosaicking for Polarimetric Applications (ECCV 2026 Oral)
 
 <p align="center">
   <a href="https://arxiv.org/abs/2603.23071"><img src="https://img.shields.io/badge/arXiv-2603.23071-b31b1b.svg" alt="arXiv paper"></a>
