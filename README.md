@@ -126,20 +126,6 @@ python infer.py --input-dir ./Datasets/PolaRGB \
 
 No dataset is redistributed by this repository.
 
-## Reproducibility status
-
-The source tree, configuration defaults, data-layout validation, inference,
-evaluation, checkpoint discovery, release audit, smoke tests, and pretrained
-checkpoints are available. Exact paper runs used Python 3.10, Adam with
-learning rate `5e-5`, and NVIDIA RTX 4090 GPUs; task-specific weights are
-documented in the corresponding configuration and README.
-
-See [`VALIDATION.md`](./VALIDATION.md) for the release-candidate test record.
-
-Before making the repository public, complete
-[`RELEASE_CHECKLIST.md`](./RELEASE_CHECKLIST.md), especially the DfP third-party
-redistribution permission and final project-license selection.
-
 ## Citation
 
 ```bibtex
