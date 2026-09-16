@@ -129,11 +129,17 @@ No dataset is redistributed by this repository.
 ## Citation
 
 ```bibtex
-@article{luo2026polarapp,
-  title   = {PolarAPP: Beyond Polarization Demosaicking for Polarimetric Applications},
-  author  = {Luo, Yidong and Li, Chenggong and Song, Yunfeng and Wang, Ping and Shi, Boxin and Zhang, Junchao and Yuan, Xin},
-  journal = {arXiv preprint arXiv:2603.23071},
-  year    = {2026}
+@inproceedings{luo2026polarapp,
+  title     = {PolarAPP: Beyond Polarization Demosaicking for Polarimetric Applications},
+  author    = {Luo, Yidong and Li, Chenggong and Song, Yunfeng and Wang, Ping and Shi, Boxin and Zhang, Junchao and Yuan, Xin},
+  booktitle = {European Conference on Computer Vision (ECCV)},
+  series    = {Lecture Notes in Computer Science},
+  volume    = {17024},
+  pages     = {115--133},
+  publisher = {Springer},
+  address   = {Cham},
+  year      = {2026},
+  doi       = {10.1007/978-3-032-37556-8_7}
 }
 ```
 
